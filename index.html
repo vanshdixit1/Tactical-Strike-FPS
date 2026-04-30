@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tactical Strike - Counter Ops</title>
+    <meta name="description" content="A tactical first-person shooter browser game with bot enemies, multiple weapons, and intense combat.">
+    <link rel="stylesheet" href="style.css?v=4">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- MAIN MENU -->
+    <div id="main-menu">
+        <div class="menu-bg-overlay"></div>
+        <div class="menu-content">
+            <div class="game-logo">
+                <h1 class="logo-text">TACTICAL<span class="logo-accent">STRIKE</span></h1>
+                <p class="logo-subtitle">COUNTER OPS</p>
+            </div>
+            <div class="menu-buttons">
+                <button id="btn-play" class="menu-btn primary-btn">
+                    <span class="btn-icon">▶</span>
+                    <span class="btn-text">DEPLOY</span>
+                </button>
+                <button id="btn-settings" class="menu-btn">
+                    <span class="btn-icon">⚙</span>
+                    <span class="btn-text">SETTINGS</span>
+                </button>
+                <button id="btn-controls" class="menu-btn">
+                    <span class="btn-icon">🎮</span>
+                    <span class="btn-text">CONTROLS</span>
+                </button>
+            </div>
+            <div class="menu-footer">
+                <p>Click DEPLOY to start • Eliminate all enemies</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS PANEL -->
+    <div id="settings-panel" class="overlay-panel hidden">
+        <div class="panel-content">
+            <h2>SETTINGS</h2>
+            <div class="setting-row">
+                <label>Mouse Sensitivity</label>
+                <input type="range" id="sensitivity-slider" min="1" max="20" value="5">
+                <span id="sensitivity-value">5</span>
+            </div>
+            <div class="setting-row">
+                <label>Master Volume</label>
+                <input type="range" id="volume-slider" min="0" max="100" value="70">
+                <span id="volume-value">70%</span>
+            </div>
+            <div class="setting-row">
+                <label>Difficulty</label>
+                <select id="difficulty-select">
+                    <option value="easy">Recruit</option>
+                    <option value="normal" selected>Veteran</option>
+                    <option value="hard">Elite</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <label>Crosshair Color</label>
+                <select id="crosshair-color">
+                    <option value="#00ff88">Green</option>
+                    <option value="#ff3344">Red</option>
+                    <option value="#ffaa00">Yellow</option>
+                    <option value="#00aaff">Blue</option>
+                    <option value="#ffffff">White</option>
+                </select>
+            </div>
+            <button class="menu-btn" id="btn-settings-back">BACK</button>
+        </div>
+    </div>
+
+    <!-- CONTROLS PANEL -->
+    <div id="controls-panel" class="overlay-panel hidden">
+        <div class="panel-content">
+            <h2>CONTROLS</h2>
+            <div class="controls-grid">
+                <div class="control-item"><span class="key">W A S D</span><span>Movement</span></div>
+                <div class="control-item"><span class="key">MOUSE</span><span>Look Around</span></div>
+                <div class="control-item"><span class="key">LEFT CLICK</span><span>Shoot</span></div>
+                <div class="control-item"><span class="key">R</span><span>Reload</span></div>
+                <div class="control-item"><span class="key">1 2 3</span><span>Switch Weapon</span></div>
+                <div class="control-item"><span class="key">SHIFT</span><span>Sprint</span></div>
+                <div class="control-item"><span class="key">SPACE</span><span>Jump</span></div>
+                <div class="control-item"><span class="key">ESC</span><span>Pause / Menu</span></div>
+                <div class="control-item"><span class="key">B</span><span>Buy Menu</span></div>
+                <div class="control-item"><span class="key">TAB</span><span>Scoreboard</span></div>
+            </div>
+            <button class="menu-btn" id="btn-controls-back">BACK</button>
+        </div>
+    </div>
+
+    <!-- GAME CANVAS -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- HUD -->
+    <div id="hud" class="hidden">
+        <!-- Scope Overlay -->
+        <div id="scope-overlay" class="hidden">
+            <div class="scope-crosshair-h"></div>
+            <div class="scope-crosshair-v"></div>
+            <div class="scope-circle"></div>
+        </div>
+
+        <!-- Crosshair -->
+        <div id="crosshair">
+            <div class="crosshair-line top"></div>
+            <div class="crosshair-line bottom"></div>
+            <div class="crosshair-line left"></div>
+            <div class="crosshair-line right"></div>
+            <div class="crosshair-dot"></div>
+        </div>
+
+        <!-- Health Bar -->
+        <div id="health-section">
+            <div class="hud-icon">✚</div>
+            <div class="stat-bar-container">
+                <div id="health-bar" class="stat-bar">
+                    <div id="health-fill" class="stat-fill health-fill"></div>
+                </div>
+                <span id="health-text" class="stat-text">100</span>
+            </div>
+        </div>
+
+        <!-- Armor Bar -->
+        <div id="armor-section">
+            <div class="hud-icon">🛡</div>
+            <div class="stat-bar-container">
+                <div id="armor-bar" class="stat-bar">
+                    <div id="armor-fill" class="stat-fill armor-fill"></div>
+                </div>
+                <span id="armor-text" class="stat-text">0</span>
+            </div>
+        </div>
+
+        <!-- Ammo -->
+        <div id="ammo-section">
+            <div id="ammo-current">30</div>
+            <div id="ammo-separator">/</div>
+            <div id="ammo-reserve">90</div>
+        </div>
+
+        <!-- Weapon Name -->
+        <div id="weapon-name">AK-47</div>
+
+        <!-- Kill Feed -->
+        <div id="kill-feed"></div>
+
+        <!-- Round Info -->
+        <div id="round-info">
+            <div id="round-number">ROUND 1</div>
+            <div id="kills-display">Kills: 0</div>
+        </div>
+
+        <!-- Money -->
+        <div id="money-display">$800</div>
+
+        <!-- Minimap -->
+        <div id="minimap-container">
+            <canvas id="minimap" width="200" height="200"></canvas>
+            <div class="minimap-ring"></div>
+            <div class="minimap-ring inner"></div>
+            <div class="minimap-scanner"></div>
+        </div>
+
+        <!-- Hit Marker -->
+        <div id="hit-marker" class="hidden">
+            <div class="hit-line tl"></div>
+            <div class="hit-line tr"></div>
+            <div class="hit-line bl"></div>
+            <div class="hit-line br"></div>
+        </div>
+
+        <!-- Damage Vignette -->
+        <div id="damage-vignette"></div>
+
+        <!-- Kill Notification -->
+        <div id="kill-notification" class="hidden">
+            <span class="kill-icon">☠</span>
+            <span id="kill-message">Enemy Eliminated</span>
+        </div>
+
+        <!-- Headshot Indicator -->
+        <div id="headshot-indicator" class="hidden">HEADSHOT</div>
+    </div>
+
+    <!-- BUY MENU -->
+    <div id="buy-menu" class="hidden">
+        <div class="buy-menu-content">
+            <h2>BUY WEAPONS</h2>
+            <div class="buy-grid">
+                <div class="buy-category">
+                    <h3>PISTOLS</h3>
+                    <button class="buy-item" data-weapon="pistol" data-cost="200">
+                        <span class="item-name">USP-S</span>
+                        <span class="item-cost">$200</span>
+                    </button>
+                    <button class="buy-item" data-weapon="deagle" data-cost="700">
+                        <span class="item-name">Desert Eagle</span>
+                        <span class="item-cost">$700</span>
+                    </button>
+                </div>
+                <div class="buy-category">
+                    <h3>RIFLES</h3>
+                    <button class="buy-item" data-weapon="ak47" data-cost="2700">
+                        <span class="item-name">AK-47</span>
+                        <span class="item-cost">$2700</span>
+                    </button>
+                    <button class="buy-item" data-weapon="m4a1" data-cost="3100">
+                        <span class="item-name">M4A1</span>
+                        <span class="item-cost">$3100</span>
+                    </button>
+                </div>
+                <div class="buy-category">
+                    <h3>SMGS</h3>
+                    <button class="buy-item" data-weapon="mp5" data-cost="1500">
+                        <span class="item-name">MP5</span>
+                        <span class="item-cost">$1500</span>
+                    </button>
+                </div>
+                <div class="buy-category">
+                    <h3>SNIPERS</h3>
+                    <button class="buy-item" data-weapon="awp" data-cost="4750">
+                        <span class="item-name">AWP</span>
+                        <span class="item-cost">$4750</span>
+                    </button>
+                </div>
+                <div class="buy-category">
+                    <h3>GEAR</h3>
+                    <button class="buy-item" data-weapon="armor" data-cost="650">
+                        <span class="item-name">Kevlar Vest</span>
+                        <span class="item-cost">$650</span>
+                    </button>
+                </div>
+            </div>
+            <div class="buy-footer">
+                <span id="buy-money">$800</span>
+                <button id="buy-close" class="menu-btn">CLOSE [B]</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAUSE MENU -->
+    <div id="pause-menu" class="hidden">
+        <div class="panel-content">
+            <h2>PAUSED</h2>
+            <button id="btn-resume" class="menu-btn primary-btn">RESUME</button>
+            <button id="btn-quit" class="menu-btn">QUIT TO MENU</button>
+        </div>
+    </div>
+
+    <!-- ROUND END -->
+    <div id="round-end" class="hidden">
+        <div class="panel-content">
+            <h2 id="round-end-title">ROUND COMPLETE</h2>
+            <div id="round-stats">
+                <div class="round-stat"><span>Kills</span><span id="stat-kills">0</span></div>
+                <div class="round-stat"><span>Headshots</span><span id="stat-headshots">0</span></div>
+                <div class="round-stat"><span>Accuracy</span><span id="stat-accuracy">0%</span></div>
+                <div class="round-stat"><span>Money Earned</span><span id="stat-money">$0</span></div>
+            </div>
+            <button id="btn-next-round" class="menu-btn primary-btn">NEXT ROUND</button>
+        </div>
+    </div>
+
+    <!-- GAME OVER -->
+    <div id="game-over" class="hidden">
+        <div class="panel-content">
+            <h2 id="game-over-title">MISSION FAILED</h2>
+            <div id="final-stats">
+                <div class="round-stat"><span>Total Kills</span><span id="final-kills">0</span></div>
+                <div class="round-stat"><span>Rounds Survived</span><span id="final-rounds">0</span></div>
+                <div class="round-stat"><span>Headshots</span><span id="final-headshots">0</span></div>
+                <div class="round-stat"><span>Total Money Earned</span><span id="final-money">$0</span></div>
+            </div>
+            <button id="btn-restart" class="menu-btn primary-btn">RESTART</button>
+            <button id="btn-main-menu" class="menu-btn">MAIN MENU</button>
+        </div>
+    </div>
+
+    <!-- SCOREBOARD -->
+    <div id="scoreboard" class="hidden">
+        <div class="scoreboard-content">
+            <h2>SCOREBOARD</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Kills</th>
+                        <th>Deaths</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody id="scoreboard-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="audio.js?v=3"></script>
+    <script src="weapons.js?v=8"></script>
+    <script src="enemy_bot.js"></script>
+    <script src="game_map.js?v=2"></script>
+    <script src="game_core.js?v=14"></script>
+</body>
+</html>
